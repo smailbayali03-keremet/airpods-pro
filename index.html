@@ -953,7 +953,7 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
 
 /* ══ VIDEO SECTION ══ */
 #video-section {
-  background: #0a0a0a;
+  background: #fff;
   padding: 80px 0 60px;
   overflow: hidden;
   position: relative;
@@ -968,14 +968,14 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
   font-size: 12px;
   letter-spacing: .25em;
   text-transform: uppercase;
-  color: #0071e3;
+  color: var(--accent);
   margin-bottom: 10px;
 }
 .video-title {
   font-size: clamp(32px, 4.5vw, 52px);
   font-weight: 700;
   letter-spacing: -.03em;
-  color: #f5f5f7;
+  color: var(--text);
   line-height: 1.05;
 }
 
@@ -1011,8 +1011,9 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
   max-width: 800px;
   border-radius: 20px;
   overflow: hidden;
-  background: #111;
-  box-shadow: 0 32px 80px rgba(0,0,0,.6);
+  background: #f9f9f9;
+  box-shadow: 0 16px 48px rgba(0,0,0,.12);
+  border: 1px solid #eee;
 }
 
 .video-thumb {
@@ -1049,7 +1050,7 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
   align-items: center;
   gap: 14px;
   padding: 18px 22px;
-  background: #1a1a1a;
+  background: #fff;
 }
 .video-avatar {
   width: 40px; height: 40px;
@@ -1061,8 +1062,8 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-.video-name { font-size: 14px; font-weight: 600; color: #f5f5f7; }
-.video-desc { font-size: 12px; color: #86868b; margin-top: 2px; }
+.video-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.video-desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
 
 /* Dots indicator */
 .video-dots {
@@ -1074,11 +1075,11 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
 .video-dot {
   width: 6px; height: 6px;
   border-radius: 50%;
-  background: rgba(255,255,255,.3);
+  background: rgba(0,0,0,.2);
   transition: background .3s, transform .3s;
   cursor: pointer;
 }
-.video-dot.active { background: #fff; transform: scale(1.4); }
+.video-dot.active { background: var(--accent); transform: scale(1.4); }
 
 /* Arrow nav */
 .vid-arrow {
@@ -1087,17 +1088,18 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
   transform: translateY(-55%);
   width: 48px; height: 48px;
   border-radius: 50%;
-  border: 1.5px solid rgba(255,255,255,.2);
-  background: rgba(255,255,255,.1);
+  border: 1.5px solid var(--border);
+  background: rgba(255,255,255,.9);
   backdrop-filter: blur(8px);
   font-size: 24px;
-  color: #fff;
+  color: var(--text);
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   z-index: 10;
-  transition: background .2s, opacity .2s;
+  transition: background .2s, box-shadow .2s, opacity .2s;
+  box-shadow: 0 4px 16px rgba(0,0,0,.1);
 }
-.vid-arrow:hover { background: rgba(255,255,255,.2); }
+.vid-arrow:hover { background: #fff; box-shadow: 0 8px 24px rgba(0,0,0,.15); }
 .vid-arrow.hidden { opacity: 0; pointer-events: none; }
 .vid-prev { left: 2vw; }
 .vid-next { right: 2vw; }
@@ -2011,14 +2013,15 @@ preload().then(() => {
     if (prev) prev.classList.toggle('hidden', idx === 0);
     if (next) next.classList.toggle('hidden', idx === cards.length - 1);
 
-    // Play this iframe, stop all others
+    // Load this iframe (no autoplay — user clicks to play, no ads forced)
     iframes.forEach((iframe, i) => {
       const base = iframe.dataset.src;
       if (i === idx) {
-        // Load + autoplay if not already playing
-        iframe.src = base + '&autoplay=1&mute=1&playsinline=1';
+        if (!iframe.src || iframe.src === window.location.href) {
+          iframe.src = base; // just load, user clicks play
+        }
       } else {
-        // Stop others
+        // Unload off-screen iframes to save memory
         iframe.src = '';
       }
     });
