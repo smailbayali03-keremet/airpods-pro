@@ -1069,8 +1069,8 @@ function drawFrame(idx) {
   const sw = iw - cropX * 2;
   const sh = ih - cropY * 2;
 
-  // Fill full width — no side strips
-  const scale = cw / sw;
+  // Cover full canvas — no strips on any side
+  const scale = Math.max(cw / sw, ch / sh);
   const dw = sw * scale, dh = sh * scale;
   const dx = (cw - dw) / 2, dy = (ch - dh) / 2;
 
