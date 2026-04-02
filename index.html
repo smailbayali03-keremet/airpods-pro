@@ -1085,18 +1085,143 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
   0%,100% { opacity: .3; } 50% { opacity: .9; }
 }
 
+/* ══════════════════════════════════════════
+   HAMBURGER MENU
+══════════════════════════════════════════ */
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  z-index: 1100;
+}
+.nav-hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: transform .3s, opacity .3s;
+}
+.nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-hamburger.open span:nth-child(2) { opacity: 0; }
+.nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Mobile nav drawer */
+.mobile-nav-drawer {
+  display: none;
+  position: fixed;
+  top: 52px; left: 0; right: 0; bottom: 0;
+  z-index: 999;
+  background: rgba(255,255,255,0.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 24px 28px 40px;
+  flex-direction: column;
+  overflow-y: auto;
+  transform: translateX(100%);
+  transition: transform .35s cubic-bezier(.25,.46,.45,.94);
+}
+.mobile-nav-drawer.open { transform: none; }
+.mobile-nav-drawer a {
+  display: block;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text);
+  text-decoration: none;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--border);
+  letter-spacing: -.02em;
+  transition: color .2s;
+}
+.mobile-nav-drawer a:last-child { border-bottom: none; }
+.mobile-nav-drawer a:active { color: var(--accent); }
+
 /* ── Responsive ── */
 @media (max-width: 900px) {
   .nav-center { display: none; }
+  .nav-hamburger { display: flex; }
+  .mobile-nav-drawer { display: flex; }
+
   #features-strip { grid-template-columns: 1fr 1fr; }
   .compare-grid { grid-template-columns: 1fr; max-width: 400px; }
   .footer-top { grid-template-columns: repeat(2, 1fr); }
   .specs-grid { grid-template-columns: 1fr; }
+
+  #hero-section { padding: 70px 6vw 0; }
+  .hero-tagline { font-size: 16px; }
+
+  .frame-text {
+    align-items: flex-end;
+    justify-content: center !important;
+    text-align: center;
+    padding: 0 6vw 80px;
+  }
+  .text-box { max-width: 100%; }
+
+  .video-card { width: clamp(260px, 80vw, 400px); }
+  #cta-section { padding: 80px 28px; }
 }
+
 @media (max-width: 600px) {
-  #features-strip { grid-template-columns: 1fr; }
-  .hero-cta { flex-direction: column; align-items: flex-start; }
-  .footer-top { grid-template-columns: 1fr; }
+  nav { padding: 0 14px; }
+
+  #hero-section { padding: 60px 5vw 0; align-items: center; text-align: center; }
+  .hero-cta { flex-direction: column; align-items: center; width: 100%; }
+  .btn-blue, .btn-outline { width: 100%; justify-content: center; font-size: 16px; padding: 14px 20px; }
+  .btn-link { align-self: center; }
+  .scroll-hint { display: none; }
+
+  .frame-text {
+    align-items: flex-end;
+    justify-content: center !important;
+    padding: 0 5vw 55px;
+    text-align: center;
+  }
+  .t-headline { font-size: clamp(26px, 7.5vw, 42px); }
+  .t-sub { font-size: 14px; }
+  .t-label { font-size: 11px; }
+
+  #features-strip { grid-template-columns: 1fr; padding: 0; }
+  .feat-card { padding: 28px 22px; }
+
+  .compare-grid { grid-template-columns: 1fr; max-width: 100%; }
+  .specs-grid { grid-template-columns: 1fr; }
+
+  #video-section { padding: 60px 0; }
+  .video-header { padding: 0 5vw; }
+  .video-track-wrap { padding: 0 5vw; }
+  .video-card { width: 82vw; border-radius: 14px; }
+  .vid-prev { left: 0; }
+  .vid-next { right: 0; }
+
+  #cta-section { padding: 60px 20px; }
+  .cta-buttons { flex-direction: column; align-items: center; width: 100%; }
+  .btn-white, .btn-outline-white { width: 100%; justify-content: center; font-size: 16px; padding: 14px 20px; }
+
+  .footer-top { grid-template-columns: 1fr; padding: 36px 0 24px; }
+  .footer-bottom { flex-direction: column; align-items: flex-start; gap: 8px; }
+
+  /* Modal — slides up from bottom */
+  #order-modal { padding: 0; align-items: flex-end; }
+  .modal-box {
+    border-radius: 20px 20px 0 0;
+    max-width: 100%;
+    max-height: 93vh;
+    width: 100%;
+  }
+  .modal-header { padding: 20px 20px 0; padding-bottom: 16px; }
+  .modal-body { padding: 16px 20px 32px; }
+  .form-row { grid-template-columns: 1fr; }
+  .form-group.full { grid-column: 1; }
+  .payment-methods { flex-wrap: wrap; }
+  .pay-btn { flex: 1 1 calc(50% - 5px); min-width: unset; }
+
+  /* Loader */
+  .loader-logo { font-size: 22px; }
 }
 </style>
 </head>
@@ -1132,8 +1257,23 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
   <div class="nav-right">
     <button class="nav-search" title="Search" id="open-search">&#128269;</button>
     <a class="nav-bag" href="#cta-section" title="Shopping Bag">&#128717;</a>
+    <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
+
+<!-- Mobile Nav Drawer -->
+<div class="mobile-nav-drawer" id="mobile-nav-drawer">
+  <a href="#hero-section" class="mobile-nav-link">Home</a>
+  <a href="#features-strip" class="mobile-nav-link">Features</a>
+  <a href="#video-section" class="mobile-nav-link">Reviews</a>
+  <a href="#compare" class="mobile-nav-link">Compare</a>
+  <a href="#specs" class="mobile-nav-link">Specs</a>
+  <a href="#cta-section" class="mobile-nav-link">Buy — $249</a>
+  <a href="https://www.instagram.com/bibo_aq/" target="_blank" rel="noopener noreferrer" class="mobile-nav-link">Instagram @bibo_aq</a>
+  <a href="#footer-contact" class="mobile-nav-link">Support</a>
+</div>
 
 <!-- Scrollable page -->
 <div id="scroller">
@@ -1894,7 +2034,28 @@ function submitOrder() {
 }
 
 // Keyboard ESC close
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeDrawer(); } });
+
+// ══ HAMBURGER MENU ══
+const hamburger = document.getElementById('nav-hamburger');
+const drawer    = document.getElementById('mobile-nav-drawer');
+
+function closeDrawer() {
+  hamburger?.classList.remove('open');
+  drawer?.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+hamburger?.addEventListener('click', () => {
+  const isOpen = drawer.classList.toggle('open');
+  hamburger.classList.toggle('open', isOpen);
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+});
+
+// Close drawer when any link inside it is clicked
+document.querySelectorAll('.mobile-nav-link').forEach(a => {
+  a.addEventListener('click', closeDrawer);
+});
 </script>
 </body>
 </html>
