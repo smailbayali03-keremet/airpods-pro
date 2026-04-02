@@ -1353,7 +1353,7 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
 
         <div class="video-card">
           <div class="video-thumb">
-            <iframe src="https://www.youtube.com/embed/GB0b6KFZVq0?rel=0&modestbranding=1" title="AirPods Pro 3 — MKBHD" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+            <iframe data-src="https://www.youtube.com/embed/GB0b6KFZVq0?rel=0&modestbranding=1" title="AirPods Pro 3 — MKBHD" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </div>
           <div class="video-meta">
             <div class="video-avatar">M</div>
@@ -1366,39 +1366,39 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
 
         <div class="video-card">
           <div class="video-thumb">
-            <iframe src="https://www.youtube.com/embed/FNmHFbDNxTk?rel=0&modestbranding=1" title="AirPods Pro 2 — Apple" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+            <iframe data-src="https://www.youtube.com/embed/7uaxtGYOEgU?rel=0&modestbranding=1" title="AirPods Pro 3 — MacRumors" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </div>
           <div class="video-meta">
-            <div class="video-avatar" style="background:#000;">🍎</div>
+            <div class="video-avatar" style="background:#e8363d;">R</div>
             <div>
-              <div class="video-name">Apple</div>
-              <div class="video-desc">AirPods Pro — Official Film</div>
+              <div class="video-name">MacRumors</div>
+              <div class="video-desc">AirPods Pro 3 — Worth Upgrading?</div>
             </div>
           </div>
         </div>
 
         <div class="video-card">
           <div class="video-thumb">
-            <iframe src="https://www.youtube.com/embed/2Km_GbKGbNQ?rel=0&modestbranding=1" title="AirPods Pro Unboxing" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+            <iframe data-src="https://www.youtube.com/embed/F3wyC6ysr9w?rel=0&modestbranding=1" title="AirPods Pro 3 — SoundGuys" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </div>
           <div class="video-meta">
-            <div class="video-avatar" style="background:#ff2d55;">J</div>
+            <div class="video-avatar" style="background:#30d158;">S</div>
             <div>
-              <div class="video-name">iJustine</div>
-              <div class="video-desc">Unboxing AirPods Pro</div>
+              <div class="video-name">SoundGuys</div>
+              <div class="video-desc">AirPods Pro 3 — Close to Perfect?</div>
             </div>
           </div>
         </div>
 
         <div class="video-card">
           <div class="video-thumb">
-            <iframe src="https://www.youtube.com/embed/mtDLFhEVvkE?rel=0&modestbranding=1" title="AirPods Pro Tips" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+            <iframe data-src="https://www.youtube.com/embed/rZpIn2y5dh4?rel=0&modestbranding=1" title="AirPods Pro 2 — SoundGuys" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </div>
           <div class="video-meta">
-            <div class="video-avatar" style="background:#5856d6;">D</div>
+            <div class="video-avatar" style="background:#5856d6;">S</div>
             <div>
-              <div class="video-name">Dave2D</div>
-              <div class="video-desc">AirPods Pro — Hidden Features</div>
+              <div class="video-name">SoundGuys</div>
+              <div class="video-desc">AirPods Pro 2 — Deep Dive Review</div>
             </div>
           </div>
         </div>
@@ -1963,6 +1963,30 @@ function scrollVideos(dir) {
   const step  = card ? card.offsetWidth + 20 : 320;
   track.scrollBy({ left: dir * step, behavior: 'smooth' });
 }
+
+// ── Auto-play video when scrolled into view (muted, like Spylt)
+(function() {
+  const iframes = document.querySelectorAll('#video-track iframe[data-src]');
+  if (!iframes.length) return;
+
+  const vidObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      const iframe = entry.target;
+      const base   = iframe.dataset.src;
+      if (entry.isIntersecting) {
+        // Start playing muted when card is at least 60% visible
+        if (!iframe.src || iframe.src === window.location.href) {
+          iframe.src = base + '&autoplay=1&mute=1&playsinline=1';
+        }
+      } else {
+        // Stop by clearing src — resets to beginning on next view
+        iframe.src = '';
+      }
+    });
+  }, { threshold: 0.6 });
+
+  iframes.forEach(f => vidObserver.observe(f));
+})();
 
 // ══════════════════════════════════════════
 // ORDER MODAL LOGIC
