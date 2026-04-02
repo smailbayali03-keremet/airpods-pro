@@ -1069,8 +1069,8 @@ function drawFrame(idx) {
   const sw = iw - cropX * 2;
   const sh = ih - cropY * 2;
 
-  // Medium zoom so product looks closer without clipping too much.
-  const scale = Math.min(cw / sw, ch / sh) * 0.9;
+  // Fill full width — no side strips
+  const scale = cw / sw;
   const dw = sw * scale, dh = sh * scale;
   const dx = (cw - dw) / 2, dy = (ch - dh) / 2;
 
