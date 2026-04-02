@@ -2013,15 +2013,12 @@ preload().then(() => {
     if (prev) prev.classList.toggle('hidden', idx === 0);
     if (next) next.classList.toggle('hidden', idx === cards.length - 1);
 
-    // Load this iframe (no autoplay — user clicks to play, no ads forced)
+    // Autoplay active card (muted), stop others
     iframes.forEach((iframe, i) => {
       const base = iframe.dataset.src;
       if (i === idx) {
-        if (!iframe.src || iframe.src === window.location.href) {
-          iframe.src = base; // just load, user clicks play
-        }
+        iframe.src = base + '&autoplay=1&mute=1&playsinline=1';
       } else {
-        // Unload off-screen iframes to save memory
         iframe.src = '';
       }
     });
