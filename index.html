@@ -677,6 +677,280 @@ footer {
 .footer-links a { font-size: 12px; color: var(--muted); text-decoration: none; transition: color .2s; }
 .footer-links a:hover { color: var(--text); }
 
+/* ══════════════════════════════════════════
+   ORDER MODAL
+══════════════════════════════════════════ */
+#order-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .35s ease, visibility .35s ease;
+}
+#order-modal.open { opacity: 1; visibility: visible; }
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.modal-box {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 32px 80px rgba(0,0,0,.22);
+  transform: translateY(24px) scale(.97);
+  transition: transform .35s cubic-bezier(.25,.46,.45,.94);
+}
+#order-modal.open .modal-box { transform: none; }
+
+/* scrollbar */
+.modal-box::-webkit-scrollbar { width: 4px; }
+.modal-box::-webkit-scrollbar-track { background: transparent; }
+.modal-box::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
+
+.modal-header {
+  padding: 28px 28px 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 20px;
+}
+.modal-header h2 {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  color: var(--text);
+}
+.modal-header p { font-size: 13px; color: var(--muted); margin-top: 4px; }
+.modal-close {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: #f0f0f0;
+  color: var(--text);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: background .2s;
+}
+.modal-close:hover { background: #e0e0e0; }
+
+.modal-body { padding: 24px 28px 28px; display: flex; flex-direction: column; gap: 22px; }
+
+/* Product summary */
+.order-product {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 16px;
+  background: #f9f9f9;
+  border-radius: 14px;
+  border: 1px solid #eee;
+}
+.order-product-img {
+  width: 72px; height: 72px;
+  background: #fff;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px;
+  border: 1px solid #eee;
+  flex-shrink: 0;
+}
+.order-product-info { flex: 1; }
+.order-product-name { font-size: 15px; font-weight: 600; color: var(--text); }
+.order-product-model { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.order-product-price { font-size: 17px; font-weight: 700; color: var(--accent); margin-top: 6px; }
+
+/* Variant selector */
+.field-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: block;
+}
+.variant-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.variant-btn {
+  padding: 9px 18px;
+  border: 1.5px solid #ddd;
+  border-radius: 980px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color .2s, background .2s, color .2s;
+}
+.variant-btn:hover { border-color: var(--accent); color: var(--accent); }
+.variant-btn.active { border-color: var(--accent); background: var(--accent); color: #fff; }
+
+/* Quantity */
+.qty-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: #f5f5f7;
+  border-radius: 12px;
+  width: fit-content;
+  overflow: hidden;
+}
+.qty-btn {
+  width: 42px; height: 42px;
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  color: var(--text);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+.qty-btn:hover { background: #e8e8ea; }
+.qty-num {
+  width: 44px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Form fields */
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-group label { font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: .02em; }
+.form-input {
+  padding: 11px 14px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 15px;
+  color: var(--text);
+  background: #fff;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+  font-family: inherit;
+  width: 100%;
+}
+.form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,113,227,.12); }
+.form-input::placeholder { color: #bbb; }
+select.form-input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236e6e73' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+
+/* Payment */
+.payment-methods { display: flex; gap: 10px; flex-wrap: wrap; }
+.pay-btn {
+  flex: 1;
+  min-width: 100px;
+  padding: 12px 10px;
+  border: 1.5px solid #ddd;
+  border-radius: 12px;
+  background: #fff;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 500;
+  transition: border-color .2s, background .2s;
+}
+.pay-btn:hover { border-color: var(--accent); }
+.pay-btn.active { border-color: var(--accent); background: #f0f7ff; color: var(--accent); }
+.pay-icon { font-size: 22px; }
+
+/* Order summary */
+.order-summary {
+  background: #f9f9f9;
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--muted);
+}
+.summary-row.total {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  padding-top: 10px;
+  border-top: 1px solid #e8e8e8;
+}
+.summary-discount { color: #30d158; font-weight: 600; }
+
+/* Submit */
+.btn-order-submit {
+  width: 100%;
+  padding: 16px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: -.01em;
+  transition: background .2s, transform .15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-order-submit:hover { background: #0077ed; transform: scale(1.01); }
+.btn-order-submit:active { transform: scale(.99); }
+
+.modal-note {
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* Success screen */
+.order-success {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  padding: 48px 28px;
+}
+.order-success.show { display: flex; }
+.success-icon {
+  width: 72px; height: 72px;
+  background: #e8fef0;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px;
+}
+.order-success h3 { font-size: 24px; font-weight: 700; letter-spacing: -.02em; color: var(--text); }
+.order-success p { font-size: 15px; color: var(--muted); line-height: 1.6; max-width: 320px; }
+.order-num { font-size: 13px; background: #f5f5f7; padding: 8px 16px; border-radius: 8px; color: var(--text); font-weight: 500; }
+
 /* ── Reveal ── */
 .reveal {
   opacity: 0;
@@ -997,6 +1271,156 @@ footer {
 
 </div>
 
+<!-- ══ ORDER MODAL ══ -->
+<div id="order-modal">
+  <div class="modal-backdrop" id="modal-backdrop"></div>
+  <div class="modal-box" id="modal-box">
+
+    <!-- Success state -->
+    <div class="order-success" id="order-success">
+      <div class="success-icon">✅</div>
+      <h3>Order Placed!</h3>
+      <p>Thank you! Your AirPods Pro are on the way. You'll receive a confirmation email shortly.</p>
+      <div class="order-num" id="order-num-display">#AP-000000</div>
+      <button class="btn-order-submit" style="margin-top:8px;max-width:220px;" onclick="closeModal()">Done</button>
+    </div>
+
+    <!-- Form state -->
+    <div id="order-form-state">
+      <div class="modal-header">
+        <div>
+          <h2>Place Your Order</h2>
+          <p>Free shipping · Free engraving · 14-day returns</p>
+        </div>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+
+        <!-- Product -->
+        <div class="order-product">
+          <div class="order-product-img">🎧</div>
+          <div class="order-product-info">
+            <div class="order-product-name">AirPods Pro (2nd Gen)</div>
+            <div class="order-product-model">With MagSafe Charging Case (USB-C)</div>
+            <div class="order-product-price" id="modal-price">$249.00</div>
+          </div>
+        </div>
+
+        <!-- Color -->
+        <div>
+          <span class="field-label">Color</span>
+          <div class="variant-row" id="color-group">
+            <button class="variant-btn active" data-color="White" onclick="selectVariant(this,'color-group')">White</button>
+            <button class="variant-btn" data-color="Midnight" onclick="selectVariant(this,'color-group')">Midnight</button>
+            <button class="variant-btn" data-color="Starlight" onclick="selectVariant(this,'color-group')">Starlight</button>
+          </div>
+        </div>
+
+        <!-- Engraving -->
+        <div class="form-group">
+          <label>Engraving (optional)</label>
+          <input class="form-input" type="text" maxlength="20" placeholder="Your name or message (max 20 chars)">
+        </div>
+
+        <!-- Quantity -->
+        <div>
+          <span class="field-label">Quantity</span>
+          <div class="qty-row">
+            <button class="qty-btn" onclick="changeQty(-1)">−</button>
+            <div class="qty-num" id="qty-display">1</div>
+            <button class="qty-btn" onclick="changeQty(1)">+</button>
+          </div>
+        </div>
+
+        <!-- Customer info -->
+        <div>
+          <span class="field-label">Your Information</span>
+          <div class="form-row">
+            <div class="form-group">
+              <label>First Name *</label>
+              <input class="form-input" id="f-first" type="text" placeholder="Ali">
+            </div>
+            <div class="form-group">
+              <label>Last Name *</label>
+              <input class="form-input" id="f-last" type="text" placeholder="Smail">
+            </div>
+            <div class="form-group full">
+              <label>Email Address *</label>
+              <input class="form-input" id="f-email" type="email" placeholder="you@example.com">
+            </div>
+            <div class="form-group full">
+              <label>Phone Number *</label>
+              <input class="form-input" id="f-phone" type="tel" placeholder="+7 (700) 000 0000">
+            </div>
+          </div>
+        </div>
+
+        <!-- Delivery -->
+        <div>
+          <span class="field-label">Delivery Address</span>
+          <div class="form-row">
+            <div class="form-group full">
+              <label>Street Address *</label>
+              <input class="form-input" id="f-addr" type="text" placeholder="123 Main St, Apt 4B">
+            </div>
+            <div class="form-group">
+              <label>City *</label>
+              <input class="form-input" id="f-city" type="text" placeholder="Almaty">
+            </div>
+            <div class="form-group">
+              <label>Country</label>
+              <select class="form-input" id="f-country">
+                <option value="KZ">🇰🇿 Kazakhstan</option>
+                <option value="RU">🇷🇺 Russia</option>
+                <option value="US">🇺🇸 United States</option>
+                <option value="KG">🇰🇬 Kyrgyzstan</option>
+                <option value="UZ">🇺🇿 Uzbekistan</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment -->
+        <div>
+          <span class="field-label">Payment Method</span>
+          <div class="payment-methods" id="pay-group">
+            <button class="pay-btn active" data-pay="card" onclick="selectVariant(this,'pay-group')">
+              <span class="pay-icon">💳</span>Card
+            </button>
+            <button class="pay-btn" data-pay="apple" onclick="selectVariant(this,'pay-group')">
+              <span class="pay-icon">🍎</span>Apple Pay
+            </button>
+            <button class="pay-btn" data-pay="cash" onclick="selectVariant(this,'pay-group')">
+              <span class="pay-icon">💵</span>Cash on Delivery
+            </button>
+            <button class="pay-btn" data-pay="installment" onclick="selectVariant(this,'pay-group')">
+              <span class="pay-icon">📅</span>Installment
+            </button>
+          </div>
+        </div>
+
+        <!-- Order summary -->
+        <div class="order-summary">
+          <div class="summary-row"><span>AirPods Pro × <span id="s-qty">1</span></span><span id="s-subtotal">$249.00</span></div>
+          <div class="summary-row"><span>Shipping</span><span style="color:#30d158;font-weight:600;">FREE</span></div>
+          <div class="summary-row"><span>Promo (BIBO10)</span><span class="summary-discount" id="s-disc">−$24.90</span></div>
+          <div class="summary-row total"><span>Total</span><span id="s-total">$224.10</span></div>
+        </div>
+
+        <!-- Submit -->
+        <button class="btn-order-submit" onclick="submitOrder()">
+          🛒 Place Order
+        </button>
+        <p class="modal-note">🔒 Secure checkout · SSL encrypted · No spam</p>
+
+      </div><!-- /modal-body -->
+    </div><!-- /form-state -->
+  </div>
+</div>
+<!-- ══ END ORDER MODAL ══ -->
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 <script>
@@ -1182,6 +1606,78 @@ preload().then(() => {
 
   ScrollTrigger.refresh();
 });
+
+// ══════════════════════════════════════════
+// ORDER MODAL LOGIC
+// ══════════════════════════════════════════
+const UNIT_PRICE = 249;
+let qty = 1;
+const DISCOUNT = 0.10; // 10% promo
+
+function openModal() {
+  document.getElementById('order-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  updateSummary();
+}
+function closeModal() {
+  document.getElementById('order-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Close on backdrop click
+document.getElementById('modal-backdrop')?.addEventListener('click', closeModal);
+
+// Open modal from every "Buy" button
+document.querySelectorAll('.btn-blue, .compare-buy, .btn-white[href="#"], [data-open-order]').forEach(el => {
+  el.addEventListener('click', e => { e.preventDefault(); openModal(); });
+});
+
+function selectVariant(btn, groupId) {
+  document.querySelectorAll('#' + groupId + ' .variant-btn, #' + groupId + ' .pay-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function changeQty(delta) {
+  qty = Math.max(1, Math.min(10, qty + delta));
+  document.getElementById('qty-display').textContent = qty;
+  updateSummary();
+}
+
+function updateSummary() {
+  const sub  = UNIT_PRICE * qty;
+  const disc = sub * DISCOUNT;
+  const total = sub - disc;
+  document.getElementById('s-qty').textContent     = qty;
+  document.getElementById('s-subtotal').textContent = '$' + sub.toFixed(2);
+  document.getElementById('s-disc').textContent     = '−$' + disc.toFixed(2);
+  document.getElementById('s-total').textContent    = '$' + total.toFixed(2);
+  document.getElementById('modal-price').textContent = '$' + (UNIT_PRICE * qty).toFixed(2);
+}
+
+function submitOrder() {
+  // Basic validation
+  const required = ['f-first','f-last','f-email','f-phone','f-addr','f-city'];
+  let valid = true;
+  required.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (!el.value.trim()) {
+      el.style.borderColor = '#ff3b30';
+      el.addEventListener('input', () => el.style.borderColor = '', { once: true });
+      valid = false;
+    }
+  });
+  if (!valid) return;
+
+  // Show success
+  const orderNum = '#AP-' + Math.floor(100000 + Math.random() * 900000);
+  document.getElementById('order-num-display').textContent = orderNum;
+  document.getElementById('order-form-state').style.display = 'none';
+  document.getElementById('order-success').classList.add('show');
+}
+
+// Keyboard ESC close
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 </script>
 </body>
 </html>
