@@ -979,30 +979,25 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
   line-height: 1.05;
 }
 
-/* Snap track — one card at a time */
+/* GSAP pin horizontal scroll */
 .video-track-wrap {
   position: relative;
+  overflow: hidden;
 }
 .video-track {
   display: flex;
   gap: 0;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
+  will-change: transform;
 }
-.video-track::-webkit-scrollbar { display: none; }
 
-/* Each card = full viewport width, centered */
+/* Each card = full viewport width */
 .video-card {
   flex-shrink: 0;
   width: 100vw;
   padding: 0 10vw;
-  scroll-snap-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0;
   box-sizing: border-box;
 }
 
@@ -1071,6 +1066,8 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
   gap: 8px;
   justify-content: center;
   margin-top: 28px;
+  position: relative;
+  z-index: 2;
 }
 .video-dot {
   width: 6px; height: 6px;
@@ -1231,14 +1228,13 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
   .compare-grid { grid-template-columns: 1fr; max-width: 100%; }
   .specs-grid { grid-template-columns: 1fr; }
 
-  #video-section { padding: 60px 0; }
+  #video-section { padding: 60px 0 40px; }
   .video-header { padding: 0 5vw; }
-  .video-track-wrap { padding: 0; }
-  .video-card { width: 100vw; padding: 0 5vw; }
+  .video-card { padding: 0 5vw; }
   .video-inner { border-radius: 14px; }
   .vid-prev { left: 1vw; }
   .vid-next { right: 1vw; }
-  .vid-arrow { width: 38px; height: 38px; font-size: 20px; }
+  .vid-arrow { width: 36px; height: 36px; font-size: 18px; }
 
   #cta-section { padding: 60px 20px; }
   .cta-buttons { flex-direction: column; align-items: center; width: 100%; }
@@ -1988,76 +1984,81 @@ preload().then(() => {
 });
 
 // ══════════════════════════════════════════
-// VIDEO SECTION — snap scroll + autoplay
+// VIDEO SECTION — vertical scroll → horizontal pin (GSAP)
 // ══════════════════════════════════════════
 (function() {
-  const track  = document.getElementById('video-track');
-  const dots   = document.querySelectorAll('.video-dot');
-  const cards  = track ? Array.from(track.querySelectorAll('.video-card')) : [];
-  const iframes = track ? Array.from(track.querySelectorAll('iframe[data-src]')) : [];
-  if (!track || !cards.length) return;
+  const section = document.getElementById('video-section');
+  const track   = document.getElementById('video-track');
+  if (!section || !track) return;
 
-  let currentIdx = 0;
+  const cards   = Array.from(track.querySelectorAll('.video-card'));
+  const iframes = Array.from(track.querySelectorAll('iframe[data-src]'));
+  const dots    = Array.from(document.querySelectorAll('.video-dot'));
+  if (!cards.length) return;
 
-  // ── Activate a card by index
-  function activateCard(idx) {
-    if (idx < 0 || idx >= cards.length) return;
-    currentIdx = idx;
+  let activeIdx = -1;
 
-    // Update dots
+  function activateVid(idx) {
+    if (idx === activeIdx) return;
+    activeIdx = idx;
+
+    // Dots
     dots.forEach((d, i) => d.classList.toggle('active', i === idx));
 
-    // Update arrows
+    // Arrows
     const prev = document.getElementById('vid-prev');
     const next = document.getElementById('vid-next');
     if (prev) prev.classList.toggle('hidden', idx === 0);
     if (next) next.classList.toggle('hidden', idx === cards.length - 1);
 
-    // Autoplay active card (muted), stop others
+    // Autoplay active, stop others
     iframes.forEach((iframe, i) => {
-      const base = iframe.dataset.src;
       if (i === idx) {
-        iframe.src = base + '&autoplay=1&mute=1&playsinline=1';
+        iframe.src = iframe.dataset.src + '&autoplay=1&mute=1&playsinline=1';
       } else {
         iframe.src = '';
       }
     });
   }
 
-  // ── Arrow navigation
-  window.scrollVideos = function(dir) {
-    const next = currentIdx + dir;
-    if (next < 0 || next >= cards.length) return;
-    cards[next].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-  };
+  // GSAP horizontal pin: scroll distance = (n-1) cards × 100vw
+  const scrollDist = (cards.length - 1) * window.innerWidth;
 
-  // ── Dot navigation
-  window.goToVideo = function(idx) {
-    cards[idx]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-  };
-
-  // ── IntersectionObserver — detects which card is centered
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const idx = cards.indexOf(entry.target);
-        if (idx !== -1 && idx !== currentIdx) activateCard(idx);
+  gsap.to(track, {
+    x: -scrollDist,
+    ease: 'none',
+    scrollTrigger: {
+      id: 'vid-pin',
+      trigger: section,
+      start: 'top top',
+      end: () => '+=' + scrollDist,
+      scrub: 0.6,
+      pin: true,
+      anticipatePin: 1,
+      onUpdate: self => {
+        const idx = Math.min(
+          cards.length - 1,
+          Math.floor(self.progress * cards.length + 0.01)
+        );
+        activateVid(idx);
       }
-    });
-  }, { root: track, threshold: 0.7 });
+    }
+  });
 
-  cards.forEach(c => io.observe(c));
+  // Dot click: scroll page to matching position
+  window.goToVideo = function(idx) {
+    const st = ScrollTrigger.getById('vid-pin');
+    if (!st) return;
+    const target = st.start + (idx / cards.length) * scrollDist;
+    window.scrollTo({ top: target, behavior: 'smooth' });
+  };
 
-  // ── Touch/drag swipe support
-  let startX = 0, isDragging = false;
-  track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
-  track.addEventListener('touchend', e => {
-    const dx = e.changedTouches[0].clientX - startX;
-    if (Math.abs(dx) > 40) scrollVideos(dx < 0 ? 1 : -1);
-  }, { passive: true });
+  // Arrows: move one card at a time
+  window.scrollVideos = function(dir) {
+    goToVideo(Math.max(0, Math.min(cards.length - 1, activeIdx + dir)));
+  };
 
-  // ── Init first card
-  activateCard(0);
+  activateVid(0);
 })();
 
 // ══════════════════════════════════════════
