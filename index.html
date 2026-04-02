@@ -953,8 +953,8 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
 
 /* ══ VIDEO SECTION ══ */
 #video-section {
-  background: #fff;
-  padding: 80px 0 80px;
+  background: #0a0a0a;
+  padding: 80px 0 60px;
   overflow: hidden;
   position: relative;
   z-index: 20;
@@ -968,47 +968,53 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
   font-size: 12px;
   letter-spacing: .25em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: #0071e3;
   margin-bottom: 10px;
 }
 .video-title {
   font-size: clamp(32px, 4.5vw, 52px);
   font-weight: 700;
   letter-spacing: -.03em;
-  color: var(--text);
+  color: #f5f5f7;
   line-height: 1.05;
 }
+
+/* Snap track — one card at a time */
 .video-track-wrap {
   position: relative;
-  padding: 0 6vw;
 }
 .video-track {
   display: flex;
-  gap: 20px;
+  gap: 0;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  padding-bottom: 8px;
-  cursor: grab;
 }
-.video-track:active { cursor: grabbing; }
 .video-track::-webkit-scrollbar { display: none; }
 
+/* Each card = full viewport width, centered */
 .video-card {
   flex-shrink: 0;
-  width: clamp(280px, 36vw, 480px);
-  scroll-snap-align: start;
-  background: #f9f9f9;
-  border-radius: 18px;
+  width: 100vw;
+  padding: 0 10vw;
+  scroll-snap-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  box-sizing: border-box;
+}
+
+.video-inner {
+  width: 100%;
+  max-width: 800px;
+  border-radius: 20px;
   overflow: hidden;
-  border: 1px solid #eee;
-  transition: transform .3s, box-shadow .3s;
+  background: #111;
+  box-shadow: 0 32px 80px rgba(0,0,0,.6);
 }
-.video-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 48px rgba(0,0,0,.1);
-}
+
 .video-thumb {
   position: relative;
   width: 100%;
@@ -1022,47 +1028,79 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
   display: block;
   border: none;
 }
+
+/* Dot placeholder while not playing */
+.video-thumb::before {
+  content: '▶';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  color: rgba(255,255,255,.3);
+  z-index: 0;
+  pointer-events: none;
+}
+.video-thumb iframe { position: relative; z-index: 1; }
+
 .video-meta {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px 18px;
+  gap: 14px;
+  padding: 18px 22px;
+  background: #1a1a1a;
 }
 .video-avatar {
-  width: 38px; height: 38px;
+  width: 40px; height: 40px;
   border-radius: 50%;
   background: var(--accent);
   color: #fff;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-.video-name { font-size: 14px; font-weight: 600; color: var(--text); }
-.video-desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.video-name { font-size: 14px; font-weight: 600; color: #f5f5f7; }
+.video-desc { font-size: 12px; color: #86868b; margin-top: 2px; }
+
+/* Dots indicator */
+.video-dots {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 28px;
+}
+.video-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.3);
+  transition: background .3s, transform .3s;
+  cursor: pointer;
+}
+.video-dot.active { background: #fff; transform: scale(1.4); }
 
 /* Arrow nav */
 .vid-arrow {
   position: absolute;
   top: 50%;
-  transform: translateY(-60%);
-  width: 44px; height: 44px;
+  transform: translateY(-55%);
+  width: 48px; height: 48px;
   border-radius: 50%;
-  border: 1.5px solid var(--border);
-  background: rgba(255,255,255,.9);
+  border: 1.5px solid rgba(255,255,255,.2);
+  background: rgba(255,255,255,.1);
   backdrop-filter: blur(8px);
-  font-size: 22px;
-  color: var(--text);
+  font-size: 24px;
+  color: #fff;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   z-index: 10;
-  transition: background .2s, box-shadow .2s, opacity .2s;
-  box-shadow: 0 4px 16px rgba(0,0,0,.1);
+  transition: background .2s, opacity .2s;
 }
-.vid-arrow:hover { background: #fff; box-shadow: 0 8px 24px rgba(0,0,0,.15); }
+.vid-arrow:hover { background: rgba(255,255,255,.2); }
 .vid-arrow.hidden { opacity: 0; pointer-events: none; }
-.vid-prev { left: calc(6vw - 22px); }
-.vid-next { right: calc(6vw - 22px); }
+.vid-prev { left: 2vw; }
+.vid-next { right: 2vw; }
 
 /* ── Reveal ── */
 .reveal {
@@ -1193,10 +1231,12 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
 
   #video-section { padding: 60px 0; }
   .video-header { padding: 0 5vw; }
-  .video-track-wrap { padding: 0 5vw; }
-  .video-card { width: 82vw; border-radius: 14px; }
-  .vid-prev { left: 0; }
-  .vid-next { right: 0; }
+  .video-track-wrap { padding: 0; }
+  .video-card { width: 100vw; padding: 0 5vw; }
+  .video-inner { border-radius: 14px; }
+  .vid-prev { left: 1vw; }
+  .vid-next { right: 1vw; }
+  .vid-arrow { width: 38px; height: 38px; font-size: 20px; }
 
   #cta-section { padding: 60px 20px; }
   .cta-buttons { flex-direction: column; align-items: center; width: 100%; }
@@ -1352,53 +1392,61 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
       <div class="video-track" id="video-track">
 
         <div class="video-card">
-          <div class="video-thumb">
-            <iframe data-src="https://www.youtube.com/embed/GB0b6KFZVq0?rel=0&modestbranding=1" title="AirPods Pro 3 — MKBHD" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-          </div>
-          <div class="video-meta">
-            <div class="video-avatar">M</div>
-            <div>
-              <div class="video-name">Marques Brownlee</div>
-              <div class="video-desc">AirPods Pro 3 — Full Review</div>
+          <div class="video-inner">
+            <div class="video-thumb">
+              <iframe data-src="https://www.youtube.com/embed/GB0b6KFZVq0?rel=0&modestbranding=1" title="AirPods Pro 3 — MKBHD" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div class="video-meta">
+              <div class="video-avatar">M</div>
+              <div>
+                <div class="video-name">Marques Brownlee</div>
+                <div class="video-desc">AirPods Pro 3 — Full Review</div>
+              </div>
             </div>
           </div>
         </div>
 
         <div class="video-card">
-          <div class="video-thumb">
-            <iframe data-src="https://www.youtube.com/embed/7uaxtGYOEgU?rel=0&modestbranding=1" title="AirPods Pro 3 — MacRumors" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-          </div>
-          <div class="video-meta">
-            <div class="video-avatar" style="background:#e8363d;">R</div>
-            <div>
-              <div class="video-name">MacRumors</div>
-              <div class="video-desc">AirPods Pro 3 — Worth Upgrading?</div>
+          <div class="video-inner">
+            <div class="video-thumb">
+              <iframe data-src="https://www.youtube.com/embed/7uaxtGYOEgU?rel=0&modestbranding=1" title="AirPods Pro 3 — MacRumors" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div class="video-meta">
+              <div class="video-avatar" style="background:#e8363d;">R</div>
+              <div>
+                <div class="video-name">MacRumors</div>
+                <div class="video-desc">AirPods Pro 3 — Worth Upgrading?</div>
+              </div>
             </div>
           </div>
         </div>
 
         <div class="video-card">
-          <div class="video-thumb">
-            <iframe data-src="https://www.youtube.com/embed/F3wyC6ysr9w?rel=0&modestbranding=1" title="AirPods Pro 3 — SoundGuys" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-          </div>
-          <div class="video-meta">
-            <div class="video-avatar" style="background:#30d158;">S</div>
-            <div>
-              <div class="video-name">SoundGuys</div>
-              <div class="video-desc">AirPods Pro 3 — Close to Perfect?</div>
+          <div class="video-inner">
+            <div class="video-thumb">
+              <iframe data-src="https://www.youtube.com/embed/F3wyC6ysr9w?rel=0&modestbranding=1" title="AirPods Pro 3 — SoundGuys" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div class="video-meta">
+              <div class="video-avatar" style="background:#30d158;">S</div>
+              <div>
+                <div class="video-name">SoundGuys</div>
+                <div class="video-desc">AirPods Pro 3 — Close to Perfect?</div>
+              </div>
             </div>
           </div>
         </div>
 
         <div class="video-card">
-          <div class="video-thumb">
-            <iframe data-src="https://www.youtube.com/embed/rZpIn2y5dh4?rel=0&modestbranding=1" title="AirPods Pro 2 — SoundGuys" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-          </div>
-          <div class="video-meta">
-            <div class="video-avatar" style="background:#5856d6;">S</div>
-            <div>
-              <div class="video-name">SoundGuys</div>
-              <div class="video-desc">AirPods Pro 2 — Deep Dive Review</div>
+          <div class="video-inner">
+            <div class="video-thumb">
+              <iframe data-src="https://www.youtube.com/embed/rZpIn2y5dh4?rel=0&modestbranding=1" title="AirPods Pro 2 — SoundGuys" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div class="video-meta">
+              <div class="video-avatar" style="background:#5856d6;">S</div>
+              <div>
+                <div class="video-name">SoundGuys</div>
+                <div class="video-desc">AirPods Pro 2 — Deep Dive Review</div>
+              </div>
             </div>
           </div>
         </div>
@@ -1408,6 +1456,13 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
       <!-- Arrow buttons -->
       <button class="vid-arrow vid-prev" id="vid-prev" onclick="scrollVideos(-1)">‹</button>
       <button class="vid-arrow vid-next" id="vid-next" onclick="scrollVideos(1)">›</button>
+    </div>
+    <!-- Dot indicators -->
+    <div class="video-dots" id="video-dots">
+      <div class="video-dot active" onclick="goToVideo(0)"></div>
+      <div class="video-dot" onclick="goToVideo(1)"></div>
+      <div class="video-dot" onclick="goToVideo(2)"></div>
+      <div class="video-dot" onclick="goToVideo(3)"></div>
     </div>
   </section>
   <!-- ══ END VIDEO SECTION ══ -->
@@ -1931,61 +1986,78 @@ preload().then(() => {
 });
 
 // ══════════════════════════════════════════
-// VIDEO SECTION — drag scroll + arrows
+// VIDEO SECTION — snap scroll + autoplay
 // ══════════════════════════════════════════
 (function() {
-  const track = document.getElementById('video-track');
-  if (!track) return;
+  const track  = document.getElementById('video-track');
+  const dots   = document.querySelectorAll('.video-dot');
+  const cards  = track ? Array.from(track.querySelectorAll('.video-card')) : [];
+  const iframes = track ? Array.from(track.querySelectorAll('iframe[data-src]')) : [];
+  if (!track || !cards.length) return;
 
-  // Drag to scroll
-  let isDown = false, startX, scrollLeft;
-  track.addEventListener('mousedown',  e => { isDown = true; track.classList.add('active'); startX = e.pageX - track.offsetLeft; scrollLeft = track.scrollLeft; });
-  track.addEventListener('mouseleave', () => { isDown = false; });
-  track.addEventListener('mouseup',    () => { isDown = false; });
-  track.addEventListener('mousemove',  e => { if (!isDown) return; e.preventDefault(); const x = e.pageX - track.offsetLeft; track.scrollLeft = scrollLeft - (x - startX) * 1.4; });
+  let currentIdx = 0;
 
-  // Arrow visibility
-  function updateArrows() {
+  // ── Activate a card by index
+  function activateCard(idx) {
+    if (idx < 0 || idx >= cards.length) return;
+    currentIdx = idx;
+
+    // Update dots
+    dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+
+    // Update arrows
     const prev = document.getElementById('vid-prev');
     const next = document.getElementById('vid-next');
-    if (!prev || !next) return;
-    prev.classList.toggle('hidden', track.scrollLeft < 20);
-    next.classList.toggle('hidden', track.scrollLeft + track.clientWidth >= track.scrollWidth - 20);
-  }
-  track.addEventListener('scroll', updateArrows, { passive: true });
-  updateArrows();
-})();
+    if (prev) prev.classList.toggle('hidden', idx === 0);
+    if (next) next.classList.toggle('hidden', idx === cards.length - 1);
 
-function scrollVideos(dir) {
-  const track = document.getElementById('video-track');
-  if (!track) return;
-  const card  = track.querySelector('.video-card');
-  const step  = card ? card.offsetWidth + 20 : 320;
-  track.scrollBy({ left: dir * step, behavior: 'smooth' });
-}
-
-// ── Auto-play video when scrolled into view (muted, like Spylt)
-(function() {
-  const iframes = document.querySelectorAll('#video-track iframe[data-src]');
-  if (!iframes.length) return;
-
-  const vidObserver = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      const iframe = entry.target;
-      const base   = iframe.dataset.src;
-      if (entry.isIntersecting) {
-        // Start playing muted when card is at least 60% visible
-        if (!iframe.src || iframe.src === window.location.href) {
-          iframe.src = base + '&autoplay=1&mute=1&playsinline=1';
-        }
+    // Play this iframe, stop all others
+    iframes.forEach((iframe, i) => {
+      const base = iframe.dataset.src;
+      if (i === idx) {
+        // Load + autoplay if not already playing
+        iframe.src = base + '&autoplay=1&mute=1&playsinline=1';
       } else {
-        // Stop by clearing src — resets to beginning on next view
+        // Stop others
         iframe.src = '';
       }
     });
-  }, { threshold: 0.6 });
+  }
 
-  iframes.forEach(f => vidObserver.observe(f));
+  // ── Arrow navigation
+  window.scrollVideos = function(dir) {
+    const next = currentIdx + dir;
+    if (next < 0 || next >= cards.length) return;
+    cards[next].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  };
+
+  // ── Dot navigation
+  window.goToVideo = function(idx) {
+    cards[idx]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  };
+
+  // ── IntersectionObserver — detects which card is centered
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const idx = cards.indexOf(entry.target);
+        if (idx !== -1 && idx !== currentIdx) activateCard(idx);
+      }
+    });
+  }, { root: track, threshold: 0.7 });
+
+  cards.forEach(c => io.observe(c));
+
+  // ── Touch/drag swipe support
+  let startX = 0, isDragging = false;
+  track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+  track.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) > 40) scrollVideos(dx < 0 ? 1 : -1);
+  }, { passive: true });
+
+  // ── Init first card
+  activateCard(0);
 })();
 
 // ══════════════════════════════════════════
